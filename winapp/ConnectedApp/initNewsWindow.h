@@ -6,4 +6,3 @@ class DrawNewsWindowThread
 public:
 	void operator()(NewsCommonObjects& common);
 };
-

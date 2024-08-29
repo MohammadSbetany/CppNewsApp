@@ -1,5 +1,4 @@
-// NewsApp.cpp : This file contains the 'main' function. Program execution begins and ends there.
-
+// NewsApp.cpp : This file contains the 'main' function,The Program execution begins and ends here.
 
 #include <iostream>
 #include <thread>
@@ -7,7 +6,7 @@
 #include "initNewsWindow.h"
 #include "DownloadingNewsThread.h"
 
-int main() { 
+int main() {
     NewsCommonObjects common;
     DrawNewsWindowThread draw;
     DownloadingNewsThread down;
@@ -18,4 +17,3 @@ int main() {
     draw_th.join();
     std::cout << "The program is ending...." << std::endl;
 }
-

@@ -24,13 +24,12 @@ void CenteredScaledText(const char* text, float scale) {// putting the text int 
 	float textWidth = ImGui::CalcTextSize(text).x;
 	float textPosX = (windowWidth - textWidth * scale) * 0.5f;
 
-	if (textPosX > 0.0f) 
+	if (textPosX > 0.0f)
 		ImGui::SetCursorPosX(textPosX);
 
 	ImGui::Text("%s", text);
-	ImGui::SetWindowFontScale(1.0f);
+	ImGui::SetWindowFontScale(1.0f);//return it to the default scale
 }
-
 
 
 void SetCustomTheme() { // Function to set the custom theme
@@ -43,7 +42,7 @@ void ResetTheme() { // Function to reset the theme back to the original state
 	ImGui::PopStyleColor(3);
 }
 
-void drawFullDetailesWindow(Article& article,int articleNum) {// creating window that have the full title deatiles
+void drawFullDetailesWindow(Article& article, int articleNum) {// creating window that have the full title deatiles
 	article.showFullDetailesWindow = true;
 	std::string howManySpaces = ""; //in this string we put number of spaces that is equal to the
 	//article number to give each window different ID because if they had the same label (each article) then
@@ -53,9 +52,7 @@ void drawFullDetailesWindow(Article& article,int articleNum) {// creating window
 
 	ImGui::Begin(("Article detailes" + howManySpaces).c_str());
 	std::string title = article.content["title"];
-	ImGui::SetWindowFontScale(1.25f);	// Scale the text size by a factor of 1.5x
 	ImGui::Text(("Title: " + title).c_str());
-	ImGui::SetWindowFontScale(1.0f);// Reset back to normal size for the rest of the UI
 
 	nlohmann::json source = article.content["source"];
 	std::string sourceName = source["name"];
@@ -71,19 +68,22 @@ void drawFullDetailesWindow(Article& article,int articleNum) {// creating window
 	ImGui::Text("URL link: ");
 
 	ImGui::SameLine();
-	if (ImGui::Button(URLLink.c_str())) 
+	if (ImGui::Button(URLLink.c_str()))
 		OpenURL(URLLink.c_str());
-	
+
 	if (ImGui::Button("Close"))
 		article.showFullDetailesWindow = false;
 
 	ImGui::End();
 }
 
-void drawPreferredTitlesWindow(NewsCommonObjects* common) {// creating window that have all the prefered titles, you should click the button to open it
+void drawPreferredTitlesWindow(NewsCommonObjects* common) {// creating window that have all the prefered titles
 	showPreferredTitlesWindow = true;
 
 	ImGui::Begin("Preferred titles");
+
+	ImGui::Text(" ");//go down one line
+	CenteredScaledText("Preferred titles list", 1.75);
 	ImGui::Text(" ");
 
 	int articleNum = 0;
@@ -91,9 +91,11 @@ void drawPreferredTitlesWindow(NewsCommonObjects* common) {// creating window th
 		articleNum++;
 		if (article.isPreferred) {
 			std::string title = article.content["title"];
+			ImGui::SetWindowFontScale(1.25f);	// Scale the text size by a factor of 1.25x
 			ImGui::Text(title.c_str());
+			ImGui::SetWindowFontScale(1.0f);// Reset back to normal size for the rest of the UI
 
-			ImGui::PushID(articleNum);// in each pushID  function we will put differnet equation to make sure that no id will be repated
+			ImGui::PushID(articleNum);// in each pushID function we will put differnet equation to make sure that no id will be repated
 			if (ImGui::Button("show detailes"))
 				article.showFullDetailesWindow = true;
 			ImGui::PopID();
@@ -104,23 +106,23 @@ void drawPreferredTitlesWindow(NewsCommonObjects* common) {// creating window th
 				article.isPreferred = !article.isPreferred;
 			ImGui::PopID();
 
-			ImGui::Text(" ");//go down one line
+			ImGui::Text(" ");
 		}
 	}
 	if (ImGui::Button("Close"))
 		showPreferredTitlesWindow = false;
 
-	ImGui::End();   
+	ImGui::End();
 }
 
 void drawNewsWindow(NewsCommonObjects* common) {// creating a window that have all the news titles (main window) created by default
 	ImGui::Begin("News");
-	ImGui::Text(" ");//go down one line
+	ImGui::Text(" ");
 	ImGui::Text("Search: ");
 
 	ImGui::SameLine();
 	static char buff[200];
-	ImGui::InputText(" ", buff, sizeof(buff));
+	ImGui::InputText(" ", buff, sizeof(buff));//to search a title
 
 	ImGui::SameLine();
 	if ((ImGui::Button("Open preferred titles list") || showPreferredTitlesWindow) && common->isDataReady) {
@@ -130,9 +132,9 @@ void drawNewsWindow(NewsCommonObjects* common) {// creating a window that have a
 	}
 
 	if (common->isDataReady) {
-		ImGui::Text(" ");//go down one line
+		ImGui::Text(" ");
 		CenteredScaledText("News", 1.75);
-		ImGui::Text(" ");//go down one line
+		ImGui::Text(" ");
 
 		int articleNum = 0;
 		for (auto& article : common->allArticles) {
@@ -149,26 +151,26 @@ void drawNewsWindow(NewsCommonObjects* common) {// creating a window that have a
 				ImGui::PushID(articleNum + (2 * common->allArticles.size()));
 				if (ImGui::Button("Show details") || article.showFullDetailesWindow) {
 					article.showFullDetailesWindow = true;
-					drawFullDetailesWindow(article,articleNum);
+					drawFullDetailesWindow(article, articleNum);
 				}
 				ImGui::PopID();
 
 				ImGui::SameLine();
-				std::string firstWord;
+				std::string REMOVEorADD;
 				std::string TOorFROM;
 				if (article.isPreferred) {
-					firstWord = "remove";
+					REMOVEorADD = "remove";
 					TOorFROM = " from";
 				}
 				else {
-					firstWord = "add";
+					REMOVEorADD = "add";
 					TOorFROM = " to";
 				}
 
 				ImGui::PushID(articleNum + (3 * common->allArticles.size()));
-				if (ImGui::Button((firstWord + TOorFROM + " prefered").c_str()))
+				if (ImGui::Button((REMOVEorADD + TOorFROM + " prefered").c_str()))
 					article.isPreferred = !article.isPreferred;
-				ImGui::Text(" ");//go down one line
+				ImGui::Text(" ");
 				ImGui::PopID();
 			}
 		}
@@ -178,9 +180,9 @@ void drawNewsWindow(NewsCommonObjects* common) {// creating a window that have a
 	ImGui::End();
 }
 
-void initNewsWindow(void* common_ptr) {// main function that initialize the news window
+void initNewsWindow(void* common_ptr) {// the function that initialize the news window (its the function that will be called by ImGuiMain)
 	auto common = (NewsCommonObjects*)common_ptr;
-	common->isDataReady.wait(false);// wait until getting notifyed my downloadingnNewsThread that the data have been downloaded
+	common->isDataReady.wait(false);// wait until isDataReady will be true after getting notifyed by downloadingnNewsThread that the data have been downloaded
 	SetCustomTheme();
 
 	if (showArticlesWindow)
@@ -194,12 +196,12 @@ void initNewsWindow(void* common_ptr) {// main function that initialize the news
 		for (auto& article : common->allArticles) {
 			articleNum++;
 			if (article.showFullDetailesWindow)
-				drawFullDetailesWindow(article,articleNum);
+				drawFullDetailesWindow(article, articleNum);
 		}
 	}
 	ResetTheme();
 }
 
-void DrawNewsWindowThread::operator()(NewsCommonObjects& common) {// sending the system function to create it with the main gui 
+void DrawNewsWindowThread::operator()(NewsCommonObjects& common) {// sending the function that initialize the system to main gui to start drawing 
 	GuiMain(initNewsWindow, &common);
 }

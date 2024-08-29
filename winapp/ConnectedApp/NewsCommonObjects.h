@@ -10,7 +10,7 @@ struct Article {
 	nlohmann::json content;
 };
 
-struct NewsCommonObjects {// it include the object that should be in the two threads (download thread and draw thread)
+struct NewsCommonObjects {// it represent the objects that should be in the two threads (download thread and draw thread)
 	std::atomic<bool> isDataReady = false;
 	std::vector <Article> allArticles;
 };

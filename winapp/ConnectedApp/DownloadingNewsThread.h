@@ -6,4 +6,3 @@ class DownloadingNewsThread
 public:
 	void operator()(NewsCommonObjects& common);
 };
-
